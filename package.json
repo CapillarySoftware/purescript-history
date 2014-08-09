@@ -1,14 +1,13 @@
 {
   "dependencies": {
-    "grunt": "~0.4.4",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-execute": "~0.2.2",
-    "grunt-purescript": "~0.5.1"
+    "gulp-purescript": "0.0.9",
+    "gulp-karma": "0.0.4"
   },
   "devDependencies": {
     "karma": "~0.12.21",
     "mocha": "~1.21.4",
     "karma-mocha": "~0.1.7",
-    "karma-phantomjs-launcher": "~0.1.4"
+    "karma-phantomjs-launcher": "~0.1.4",
+    "gulp": "~3.8.7"
   }
 }
