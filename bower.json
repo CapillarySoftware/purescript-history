@@ -1,0 +1,31 @@
+{
+  "name": "purescript-history",
+  "version": "0.0.1",
+  "homepage": "https://github.com/CapillarySoftware/purescript-history",
+  "authors": [
+    "Isaac Shapira <fresheyeball@gmail.com>"
+  ],
+  "description": "Browser History abstraction and bindings for PureScript",
+  "main": "src/History.purs",
+  "keywords": [
+    "Purescript",
+    "History"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "purescript-easy-ffi": "~1.0.1"
+  },
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "output",
+    "bower.json",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "devDependencies": {
+    "purescript-mocha": "*",
+    "purescript-chai": "*"
+  }
+}
