@@ -5,11 +5,10 @@ module History
   , History(..), State(..)
   ) where
 
-import Debug.Foreign
 import Data.Foreign.EasyFFI
 import Control.Monad.Eff
 import Control.Reactive
-import Control.Reactive.EventEmitter
+import Control.Reactive.Event
 
 type Title                  = String
 type Url                    = String

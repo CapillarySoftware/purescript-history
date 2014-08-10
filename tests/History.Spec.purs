@@ -7,9 +7,8 @@ import History
 import Test.Mocha
 import Test.Chai
 import Control.Monad.Eff
-import Control.Reactive.EventEmitter
+import Control.Reactive.Event
 import Control.Reactive.Timer
-import Debug.Foreign
 
 expectStateToMatch os = do
   ts <- getState

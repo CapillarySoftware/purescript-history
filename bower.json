@@ -14,19 +14,21 @@
   "license": "MIT",
   "dependencies": {
     "purescript-easy-ffi": "~1.0.1",
-    "purescript-reactive": "*"
+    "purescript-reactive": "*",
+    "purescript-events": "*"
   },
   "ignore": [
     "**/.*",
     "bower_components",
     "node_modules",
-    "output",
+    "tmp",
     "bower.json",
     "Gruntfile.js",
     "package.json"
   ],
   "devDependencies": {
     "purescript-mocha": "*",
-    "purescript-chai": "*"
+    "purescript-chai": "*",
+    "purescript-timers": "*"
   }
 }
