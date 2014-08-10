@@ -1,5 +1,7 @@
 # Module Documentation
 
+[![Build Status](https://travis-ci.org/CapillarySoftware/purescript-history.svg?branch=master)](https://travis-ci.org/CapillarySoftware/purescript-history)
+
 ## Module History
 
 ### Types
