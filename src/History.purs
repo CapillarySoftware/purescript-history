@@ -22,7 +22,7 @@ type State d                = {
     url    :: Url    
   }
 
-foreign import data History :: !
+foreign import data History :: # * -> !
 
   
 
@@ -30,7 +30,7 @@ getData                     = unsafeForeignFunction [""] "window.history.state"
 getTitle                    = unsafeForeignFunction [""] "document.title"
 getUrl                      = unsafeForeignFunction [""] "location.pathname"
 
-getState                    :: forall eff d. Eff (history :: History | eff) (State d)
+getState                    :: forall eff d. Eff (history :: History d | eff) (State d)
 getState                    = do d <- getData
                                  t <- getTitle
                                  u <- getUrl
@@ -40,7 +40,7 @@ stateUpdaterNative          :: forall d eff. String ->
                              { | d } -> -- State.data
                              Title   -> -- State.title 
                              Url     -> -- State.url
-                             Eff (history :: History | eff) Unit
+                             Eff (history :: History d | eff) Unit
 stateUpdaterNative        x = unsafeForeignProcedure ["d","title","url", ""] $ x ++ "(d,title,url)"
 
 statechange                 = "statechange"
@@ -64,19 +64,19 @@ subscribeStateChange        :: forall a b eff.
 subscribeStateChange        = subscribeEvented statechange
 
 
-goBack_                     :: forall eff. Eff (history :: History | eff) Unit
+goBack_                     :: forall d eff. Eff (history :: History d | eff) Unit
 goBack_                     = unsafeForeignFunction [""]        "window.history.back()"
 goBack                      = do 
   emitStateChange "back"
   goBack_
 
-goForward_                  :: forall eff. Eff (history :: History | eff) Unit
+goForward_                  :: forall d eff. Eff (history :: History d | eff) Unit
 goForward_                  = unsafeForeignFunction  [""]        "window.history.forward()"
 goForward                   = do
   emitStateChange "forward"
   goForward_
 
-goState_                    :: forall eff. Delta -> Eff (history :: History | eff) Unit
+goState_                    :: forall d eff. Delta -> Eff (history :: d History | eff) Unit
 goState_                    = unsafeForeignProcedure ["Δ",""] "window.history.go(Δ)"
 goState                   x = do 
   emitStateChange $ "goState(" ++ (show x) ++ ")"
