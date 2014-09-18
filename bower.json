@@ -1,6 +1,6 @@
 {
   "name": "purescript-history",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "homepage": "https://github.com/CapillarySoftware/purescript-history",
   "authors": [
     "Isaac Shapira <fresheyeball@gmail.com>"
