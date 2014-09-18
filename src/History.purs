@@ -2,7 +2,7 @@ module History
   ( getState, pushState, replaceState    
   , goBack, goForward, goState
   , subscribeStateChange
-  , History(..), State(..)
+  , History(..), State(..), Url(..)
   ) where
 
 import Data.Foreign.EasyFFI
