@@ -34,49 +34,48 @@ getState = do d <- getData
               u <- getUrl
               return { title : t, url : u, "data" : d }
 
+stateUpdaterNative :: forall d eff. String ->
+                      { | d } -> -- State.data
+                      Title   -> -- State.title 
+                      Url     -> -- State.url
+                      Eff (history :: History d | eff) Unit
+stateUpdaterNative x = unsafeForeignProcedure ["d","title","url", ""] $ x ++ "(d,title,url)"
 
-stateUpdaterNative          :: forall d eff. String ->
-                             { | d } -> -- State.data
-                             Title   -> -- State.title 
-                             Url     -> -- State.url
-                             Eff (history :: History d | eff) Unit
-stateUpdaterNative        x = unsafeForeignProcedure ["d","title","url", ""] $ x ++ "(d,title,url)"
+statechange = "statechange"
 
-statechange                 = "statechange"
+emitStateChange s = emit $ newEvent statechange { state : s }
 
-emitStateChange           s = emit $ newEvent statechange { state : s }
-
-pushState'                  = stateUpdaterNative "window.history.pushState"
-pushState                 s = do  
+pushState' = stateUpdaterNative "window.history.pushState"
+pushState         s = do  
   emitStateChange s
   pushState'      s."data" s.title s.url  
   
-replaceState'               = stateUpdaterNative "window.history.replaceState"
-replaceState              s = do
+replaceState' = stateUpdaterNative "window.history.replaceState"
+replaceState      s = do
   emitStateChange s
   replaceState'   s."data" s.title s.url
 
 
-subscribeStateChange        :: forall a b eff. 
-                            (Event a -> Eff (reactive :: Reactive | eff) b) -> 
-                            Eff (reactive :: Reactive | eff) Subscription
-subscribeStateChange        = subscribeEvented statechange
+subscribeStateChange :: forall a b eff. 
+                        (Event a -> Eff (reactive :: Reactive | eff) b) -> 
+                        Eff (reactive :: Reactive | eff) Subscription
+subscribeStateChange = subscribeEvented statechange
 
 
-goBack_                     :: forall d eff. Eff (history :: History d | eff) Unit
-goBack_                     = unsafeForeignFunction [""]        "window.history.back()"
-goBack                      = do 
+goBack_ :: forall d eff. Eff (history :: History d | eff) Unit
+goBack_ = unsafeForeignFunction [""] "window.history.back()"
+goBack = do 
   emitStateChange "back"
   goBack_
 
-goForward_                  :: forall d eff. Eff (history :: History d | eff) Unit
-goForward_                  = unsafeForeignFunction  [""]        "window.history.forward()"
-goForward                   = do
+goForward_ :: forall d eff. Eff (history :: History d | eff) Unit
+goForward_ = unsafeForeignFunction  [""] "window.history.forward()"
+goForward = do
   emitStateChange "forward"
   goForward_
 
-goState_                    :: forall d eff. Delta -> Eff (history :: d History | eff) Unit
-goState_                    = unsafeForeignProcedure ["Δ",""] "window.history.go(Δ)"
-goState                   x = do 
-  emitStateChange $ "goState(" ++ (show x) ++ ")"
+goState_ :: forall d eff. Delta -> Eff (history :: History d | eff) Unit
+goState_ = unsafeForeignProcedure ["Δ",""] "window.history.go(Δ)"
+goState x = do 
+  emitStateChange $ "goState(" ++ show x ++ ")"
   goState_ x

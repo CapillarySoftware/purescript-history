@@ -16,20 +16,19 @@ expectStateToMatch os = do
   -- This works in Chrome but not PhantomJS
   -- expect os."data" `toDeepEqual` ts."data"
 
-expectDetailStateToBe os e = do
-  let d = unwrapEventDetail e
-  expect d.state `toDeepEqual` os
+expectDetailStateToBe os e = 
+  expect (unwrapEventDetail e).state `toDeepEqual` os
   
-spec = describe "History" $ do
-  let os   = {title : "wowzers!",   url : "/foo", "data" : { foo : 1 }}
-  let os'  = {title : "wowzers!!",  url : "/bar", "data" : { foo : 2 }}
-  let os'' = {title : "wowzers!!!", url : "/baz", "data" : { foo : 3 }}
-  
-  it "initial state should have no title" $ do
-    ts <- getState
-    expect ts.title `toEqual` ""
+os   = {title : "wowzers!",   url : "/foo", "data" : { foo : 1 }}
+os'  = {title : "wowzers!!",  url : "/bar", "data" : { foo : 2 }}
+os'' = {title : "wowzers!!!", url : "/baz", "data" : { foo : 3 }}
 
-  it "pushState should change the state" $ do
+spec = describe "History" do
+  
+  it "initial state should have no title" $
+    getState >>= \ts -> expect ts.title `toEqual` ""
+
+  it "pushState should change the state" do
     pushState os
     expectStateToMatch os
 
@@ -42,12 +41,12 @@ spec = describe "History" $ do
     expectStateToMatch os'
     unsubscribe sub
 
-  it "replaceState should change the state" $ do
+  it "replaceState should change the state" do
     replaceState os''
     expectStateToMatch os''
 
-  itAsync "replaceState should fire statechange" $ \done -> do 
-    sub <- subscribeStateChange  \e -> do
+  itAsync "replaceState should fire statechange" \done -> do 
+    sub <- subscribeStateChange \e -> do
       expectDetailStateToBe os e
       itIs done    
       return Unit
@@ -55,38 +54,39 @@ spec = describe "History" $ do
     expectStateToMatch os
     unsubscribe sub
 
-  itAsync "goBack should go back a state" $ \done -> do
+  let subAndExpect = subscribeStateChange <<< expectDetailStateToBe
+
+  itAsync "goBack should go back a state" \done -> do
     expectStateToMatch os
     pushState os'
     expectStateToMatch os'
 
-    sub <- subscribeStateChange $ expectDetailStateToBe "back"
+    sub <- subAndExpect "back"
     goBack
     unsubscribe sub
     
-    timeout 5 $ do
+    timeout 5 do
       expectStateToMatch os      
       itIs done
 
-  itAsync "goForward should go forward a state" $ \done -> do
+  itAsync "goForward should go forward a state" \done -> do
     expectStateToMatch os
 
-    sub <- subscribeStateChange $ expectDetailStateToBe "forward"
+    sub <- subAndExpect "forward"
     goForward
     unsubscribe sub
 
-    timeout 5 $ do
+    timeout 5 do
       expectStateToMatch os'
       itIs done
 
-  itAsync "go accepts a number to move in the state" $ \done -> do
-    sub <- subscribeStateChange $ expectDetailStateToBe "goState(-1)"
+  itAsync "go accepts a number to move in the state" \done -> do
     expectStateToMatch os'
-    
+
+    sub <- subAndExpect "goState(-1)"
     goState (-1)
-    
     unsubscribe sub
 
-    timeout 5 $ do
+    timeout 5 do
       expectStateToMatch os
       itIs done
