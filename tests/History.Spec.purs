@@ -79,14 +79,14 @@ spec = describe "History" $ do
       expectStateToMatch os'
       itIs done
 
-  -- itAsync "go accepts a number to move in the state" $ \done -> do
-  --   sub <- subscribeStateChange $ expectDetailStateToBe "goState(-1)"
-  --   expectStateToMatch os'
+  itAsync "go accepts a number to move in the state" $ \done -> do
+    sub <- subscribeStateChange $ expectDetailStateToBe "goState(-1)"
+    expectStateToMatch os'
     
-  --   goState (-1)
+    goState (-1)
     
-  --   unsubscribe sub
+    unsubscribe sub
 
-  --   timeout 5 $ do
-  --     expectStateToMatch os
-  --     itIs done
+    timeout 5 $ do
+      expectStateToMatch os
+      itIs done

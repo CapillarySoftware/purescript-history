@@ -10,13 +10,13 @@ import Control.Monad.Eff
 import Control.Reactive
 import Control.Reactive.Event
 
-type Title                  = String
-type Url                    = String
-type Delta                  = Number
+type Title   = String
+type Url     = String
+type Delta   = Number
 
 --- Record representing browser state 
 --- Passed to and returned by history
-type State d                = {
+type State d = {
     "data" :: { | d },
     title  :: Title, 
     url    :: Url    
@@ -24,17 +24,16 @@ type State d                = {
 
 foreign import data History :: # * -> !
 
-  
+getData  = unsafeForeignFunction [""] "window.history.state"
+getTitle = unsafeForeignFunction [""] "document.title"
+getUrl   = unsafeForeignFunction [""] "location.pathname"
 
-getData                     = unsafeForeignFunction [""] "window.history.state"
-getTitle                    = unsafeForeignFunction [""] "document.title"
-getUrl                      = unsafeForeignFunction [""] "location.pathname"
+getState :: forall eff d. Eff (history :: History d | eff) (State d)
+getState = do d <- getData
+              t <- getTitle
+              u <- getUrl
+              return { title : t, url : u, "data" : d }
 
-getState                    :: forall eff d. Eff (history :: History d | eff) (State d)
-getState                    = do d <- getData
-                                 t <- getTitle
-                                 u <- getUrl
-                                 return { title : t, url : u, "data" : d }
 
 stateUpdaterNative          :: forall d eff. String ->
                              { | d } -> -- State.data
