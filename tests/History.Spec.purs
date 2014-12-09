@@ -8,7 +8,7 @@ import Test.Mocha
 import Test.Chai
 import Control.Monad.Eff
 import Control.Reactive.Event
-import Control.Reactive.Timer
+import Control.Timer
 
 expectStateToMatch os = do
   ts <- getState
@@ -26,7 +26,7 @@ os'' = {title : "wowzers!!!", url : "/baz", "data" : { foo : 3 }}
 spec = describe "History" do
   
   it "initial state should have no title" $
-    getState >>= \ts -> expect ts.title `toEqual` ""
+    getState >>= \{ title = ts } -> expect ts `toEqual` ""
 
   it "pushState should change the state" do
     pushState os
