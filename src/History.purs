@@ -26,9 +26,6 @@ statechange = "statechange"
 
 emitStateChange s = emit $ newEvent statechange { state : s }
 
-mkState :: forall d. d -> Title -> Url -> State d
-mkState d t u = { title: t, url: u, data: d }
-
 getData :: forall eff d. Eff (history :: History d | eff) d
 getData = unsafeForeignFunction [""] "window.history.state"
 
