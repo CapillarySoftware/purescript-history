@@ -33,29 +33,19 @@ type State d = { data   :: d
                , title  :: Title
                , url    :: Url }
 
-stateUpdaterNative :: forall d eff. String ->
-                                    d      -> -- State.data
-                                    Title  -> -- State.title
-                                    Url    -> -- State.url
-                                    Eff (history :: History d | eff) Unit
-stateUpdaterNative x = unsafeForeignProcedure ["d", "title", "url", ""] $ x ++ "(d,title,url)"
-
 foreign import data History :: * -> !
+
+update x {data = d, title = t, url = u} =
+  unsafeForeignProcedure ["d", "title", "url", ""] (x ++ "(d,title,url)") d t u
 
 mkState :: forall d. d -> Title -> Url -> State d
 mkState d t u = { title: t, url: u, data: d }
 
 pushStateRaw :: forall d eff. State d -> Eff (history :: History d, reactive :: Reactive | eff) Unit
-pushStateRaw s = pushState' s.data s.title s.url
-  where
-  pushState' :: forall d eff. d -> Title -> Url -> Eff (history :: History d | eff) Unit
-  pushState' = stateUpdaterNative "window.history.pushState"
+pushStateRaw = update "window.history.pushState"
 
 replaceStateRaw :: forall d eff. State d -> Eff (history :: History d, reactive :: Reactive | eff) Unit
-replaceStateRaw s = replaceState' s."data" s.title s.url
-  where
-  replaceState' :: forall d eff. d -> Title -> Url -> Eff (history :: History d | eff) Unit
-  replaceState' = stateUpdaterNative "window.history.replaceState"
+replaceStateRaw = update "window.history.replaceState"
 
 goBackRaw :: forall d eff. Eff (history :: History d | eff) Unit
 goBackRaw = unsafeForeignFunction [""] "window.history.back()"
