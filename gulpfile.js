@@ -1,4 +1,4 @@
-var 
+var
 gulp       = require('gulp'),
 purescript = require('gulp-purescript'),
 runSq      = require('run-sequence'),
@@ -7,10 +7,10 @@ gulpif     = require('gulp-if'),
 concat     = require('gulp-concat'),
 
 libSrc     = ['bower_components/purescript-*/src/**/*.purs',
-              'src/History.purs'],
+              'src/**/*.purs'],
 src        = ['bower_components/purescript-*/src/**/*.purs',
               'bower_components/chai/chai.js',
-              'src/History.purs',
+              'src/**/*.purs',
               'tests/History.Spec.purs',
               'tests/Main.purs'],
 libDest    = {
@@ -25,7 +25,7 @@ psc        = purescript.psc({
               main        : true,
               output      : dest.file
             }),
-karma      = karma({              
+karma      = karma({
               configFile  : "./tests/karma.conf.js",
               action      : "run"
             });
@@ -52,8 +52,8 @@ gulp.task('docgen', function(){
 
 gulp.task('test:unit',function(){
   setTimeout(function(){
-    gulp.src(dest.path+dest.file).pipe(karma);  
-  }, 2000);  
+    gulp.src(dest.path+dest.file).pipe(karma);
+  }, 2000);
 });
 
 gulp.task('test', function(){ runSq('build:test', 'test:unit'); });

@@ -1,6 +1,6 @@
 module History.Spec where
 
-    --- NOTE THIS IS ONLY WORKS BECAUSE HISTORY CAN NOT BE RESET 
+    --- NOTE THIS IS ONLY WORKS BECAUSE HISTORY CAN NOT BE RESET
     --- SO TESTS HAVE SIDE EFFECTS, AND RELY ON EACH OTHER
 
 import History
@@ -16,15 +16,15 @@ expectStateToMatch os = do
   -- This works in Chrome but not PhantomJS
   -- expect os."data" `toDeepEqual` ts."data"
 
-expectDetailStateToBe os e = 
+expectDetailStateToBe os e =
   expect (unwrapEventDetail e).state `toDeepEqual` os
-  
+
 os   = {title : "wowzers!",   url : "/foo", "data" : { foo : 1 }}
 os'  = {title : "wowzers!!",  url : "/bar", "data" : { foo : 2 }}
 os'' = {title : "wowzers!!!", url : "/baz", "data" : { foo : 3 }}
 
 spec = describe "History" do
-  
+
   it "initial state should have no title" $
     getState >>= \{ title = ts } -> expect ts `toEqual` ""
 
@@ -45,10 +45,10 @@ spec = describe "History" do
     replaceState os''
     expectStateToMatch os''
 
-  itAsync "replaceState should fire statechange" \done -> do 
+  itAsync "replaceState should fire statechange" \done -> do
     sub <- subscribeStateChange \e -> do
       expectDetailStateToBe os e
-      itIs done    
+      itIs done
       return Unit
     replaceState os
     expectStateToMatch os
@@ -64,9 +64,9 @@ spec = describe "History" do
     sub <- subAndExpect "back"
     goBack
     unsubscribe sub
-    
+
     timeout 5 do
-      expectStateToMatch os      
+      expectStateToMatch os
       itIs done
 
   itAsync "goForward should go forward a state" \done -> do
